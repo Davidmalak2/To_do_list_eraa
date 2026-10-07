@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return "Enter your name";
                   }
                   return null;
-                },
+                }, hint: 'Enter your full name',
               ),
 
               const SizedBox(height: 50),
