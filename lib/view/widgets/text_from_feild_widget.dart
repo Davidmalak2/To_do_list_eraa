@@ -5,14 +5,16 @@ class CustomTextFormField extends StatelessWidget {
     super.key,
     this.controller,
     this.validator,
+    this.maxLines = 1,
     required this.label,
-    this.hint,
+    required this.hint,
   });
 
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final String label;
-  final String? hint;
+  final String hint;
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -22,31 +24,17 @@ class CustomTextFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           validator: validator,
+          maxLines: maxLines,
           decoration: InputDecoration(
-            hintText: hint ?? "Enter your $label",
-            hintStyle: const TextStyle(color: Colors.grey),
-            fillColor: Colors.white,
-            filled: true,
-            focusedBorder: OutlineInputBorder(
+            hintText: hint,
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.blue),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.transparent),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.red),
             ),
           ),
         ),
