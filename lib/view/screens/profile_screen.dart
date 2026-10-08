@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+
 import 'package:todo_list/core/utils/routes.dart';
 import 'package:todo_list/models/user_model.dart';
-import 'package:todo_list/view/widgets/text_from_feild_widget.dart' show CustomTextFormField;
+import 'package:todo_list/view/widgets/text_from_feild_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,7 +13,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController fullNameController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -25,19 +26,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
+
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+
             children: [
-              // Profile Avatar Icon
+              // Profile Avatar
               Container(
                 padding: const EdgeInsets.all(30),
+
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8ECF5),
                   borderRadius: BorderRadius.circular(100),
                 ),
+
                 child: const Icon(
                   Icons.person,
                   size: 100,
@@ -49,6 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const Text(
                 "Create Your Profile",
+
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -57,16 +64,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 20),
 
-              // Custom Form Input
+              // Full Name
               CustomTextFormField(
                 label: "Full Name",
+                hint: "Enter your full name",
                 controller: fullNameController,
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Enter your name";
                   }
+
                   return null;
-                }, hint: 'Enter your full name',
+                },
               ),
 
               const SizedBox(height: 50),
@@ -74,7 +84,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Create Button
               MaterialButton(
                 onPressed: () async {
-                  // Check if name is empty
                   if (fullNameController.text.trim().isEmpty) {
                     _showError("Enter your name");
                     return;
@@ -82,14 +91,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   await _createProfile();
                 },
+
                 color: const Color(0xFF3F51B5),
+
                 padding: const EdgeInsets.all(10),
+
                 minWidth: 300,
+
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+
                 child: const Text(
                   "Create",
+
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -106,25 +121,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _createProfile() async {
     try {
-      // Show loading dialog
+      // Show loading
       _showLoading();
 
+      // Get User Box
       final userBox = Hive.box<UserModel>('User');
 
+      // Create User
       final user = UserModel(
         fullName: fullNameController.text.trim(),
       );
 
-      await userBox.put("UserKey", user);
+      // Save User in Hive
+      await userBox.put(
+        "UserKey",
+        user,
+      );
 
-      // Check that widget still exists
       if (!mounted) return;
 
       // Close loading dialog
       Navigator.of(context).pop();
 
-      // Navigate to Home
-      Navigator.of(context).pushNamed(AppRoutes.home);
+      // Go to Home and remove Profile from navigation stack
+      Navigator.of(context).pushReplacementNamed(
+        AppRoutes.home,
+      );
     } catch (error) {
       if (!mounted) return;
 
@@ -140,14 +162,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
+
       builder: (BuildContext context) {
         return const AlertDialog(
           content: Row(
             children: [
               CircularProgressIndicator(),
+
               SizedBox(width: 20),
+
               Text(
                 "Loading...",
+
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
@@ -164,24 +190,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
+
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
             'Error',
-            style: TextStyle(fontSize: 20),
+
+            style: TextStyle(
+              fontSize: 20,
+            ),
           ),
+
           content: Text(
             error,
+
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
           ),
+
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+
               child: const Text('OK'),
             ),
           ],
