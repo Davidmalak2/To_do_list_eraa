@@ -1,41 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_list/core/utils/routes.dart';
+import 'package:todo_list/models/task_model.dart';  
 import 'package:todo_list/models/user_model.dart';
-import 'package:todo_list/view/screens/add_task_screen.dart'; 
+import 'package:todo_list/view/screens/add_task_screen.dart';
 import 'package:todo_list/view/screens/home_screen.dart';
 import 'package:todo_list/view/screens/profile_screen.dart';
-import 'package:todo_list/core/utils/routes.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Hive
   await Hive.initFlutter();
 
-  // Register Hive Adapter
   Hive.registerAdapter(UserModelAdapter());
+  Hive.registerAdapter(TaskModelAdapter());
+  Hive.registerAdapter(StatusTaskAdapter());
 
-  // Open User Box
   await Hive.openBox<UserModel>('User');
+  await Hive.openBox<TaskModel>('Tasks');
 
-  runApp(const TodoApp());
+  runApp(const ToDoApp());
 }
 
-class TodoApp extends StatelessWidget {
-  const TodoApp({super.key});
+class ToDoApp extends StatelessWidget {
+  const ToDoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      initialRoute: AppRoutes.addTask, // Set the initial route to the AddTaskScreen
-
+      initialRoute: AppRoutes.home,
       routes: {
         AppRoutes.profile: (context) => const ProfileScreen(),
-        AppRoutes.home: (context) => const HomeScreen(),
         AppRoutes.addTask: (context) => const AddTaskScreen(),
+        AppRoutes.home: (context) => const HomeScreen(),
       },
     );
   }
