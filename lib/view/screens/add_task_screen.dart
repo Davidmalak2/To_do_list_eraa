@@ -1,5 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_list/core/%D9%90app_dialog.dart';
+import 'package:todo_list/models/task_model.dart';
 import 'package:todo_list/view/widgets/choose_color_widget.dart';
 import 'package:todo_list/view/widgets/custom_material_button.dart';
 import 'package:todo_list/view/widgets/text_from_feild_widget.dart';
@@ -65,11 +68,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 items: const [
                   DropdownMenuItem(
                     value: "Pending",
-                    child: Text("Pending", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    child: Text(
+                      "Pending",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: "Done",
-                    child: Text("Done", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    child: Text(
+                      "Done",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ],
                 onChanged: (value) {
@@ -88,11 +103,37 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ),
               const SizedBox(height: 25),
               CustomMaterialButton(
-                onPressed: () {
+                onPressed: () async {
                   log("Title: ${titleTask.text}");
                   log("Des: ${desTask.text}");
                   log("Status: $dropdownButtonValue");
                   log("Color: $colorSelected");
+
+                  // حفظ المهمة في Hive Box
+                  var taskBox = Hive.box<TaskModel>('Tasks');
+                  await taskBox
+                      .add(
+                    TaskModel(
+                      title: titleTask.text,
+                      description: desTask.text,
+                      status: dropdownButtonValue == "Pending"
+                          ? StatusTask.pending
+                          : StatusTask.done,
+                      colorHex: colorSelected,
+                    ),
+                  )
+                      .then((value) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                    titleTask.clear();
+                    desTask.clear();
+                    colorSelected = 0xff2196F3;
+                  }).catchError((error) {
+                    if (context.mounted) {
+                      AppDialog.showError(context, error.toString());
+                    }
+                  });
                 },
                 text: "Save",
               ),
@@ -101,5 +142,4 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
       ),
     );
-  }
-}
+  }}
